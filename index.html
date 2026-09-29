@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elective Priority Planner</title>
+<style>
+
+:root{
+    --bg: #0f172a;
+    --card: #1e293b;
+    --card-light: #334155;
+
+    --text: #f8fafc;
+    --muted: #cbd5e1;
+
+    --accent: #38bdf8;
+    --accent-dark: #0284c7;
+
+    --selected: #14532d;
+    --selected-border: #4ade80;
+
+    --button: #2563eb;
+    --button-hover: #1d4ed8;
+
+    --summary: #243447;
+}
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial, sans-serif;
+    color:var(--text);
+    padding:20px;
+
+    background:
+    radial-gradient(
+        circle at top left,
+        #1e3a8a 0%,
+        #0f172a 35%,
+        #020617 100%
+    );
+
+    min-height:100vh;
+}
+
+h1{
+    text-align:center;
+    margin-bottom:25px;
+    color:white;
+}
+
+h2{
+    margin:20px 0 12px;
+    color:white;
+}
+
+.container{
+    display:flex;
+    gap:20px;
+    align-items:flex-start;
+}
+
+#courses{
+    flex:3;
+}
+
+#priorityPanel{
+    flex:1;
+    min-width:320px;
+
+    background:var(--card);
+
+    padding:18px;
+
+    border-radius:16px;
+
+    position:sticky;
+    top:10px;
+
+    box-shadow:
+    0 8px 24px rgba(0,0,0,.35);
+}
+
+#priorityPanel h2{
+    margin-top:0;
+}
+
+#priorityPanel p{
+    color:var(--muted);
+    margin-bottom:12px;
+}
+
+details{
+    background:var(--card);
+
+    border-radius:12px;
+
+    margin-bottom:12px;
+
+    overflow:hidden;
+
+    box-shadow:
+    0 4px 12px rgba(0,0,0,.25);
+
+    transition:.2s ease;
+}
+
+details:hover{
+    transform:translateY(-1px);
+}
+
+summary{
+    padding:14px 16px;
+
+    background:var(--summary);
+
+    color:white;
+
+    cursor:pointer;
+
+    font-weight:bold;
+
+    user-select:none;
+}
+
+.course{
+    display:block;
+
+    padding:12px 16px;
+
+    color:var(--muted);
+
+    cursor:pointer;
+
+    transition:.2s ease;
+
+    border-left:6px solid transparent;
+}
+
+.course:hover{
+    background:rgba(56,189,248,.12);
+
+    color:white;
+}
+
+.course.selected{
+    background:var(--selected);
+
+    border-left:6px solid var(--selected-border);
+
+    color:white;
+
+    font-weight:600;
+}
+
+#priorityList{
+    list-style:none;
+    padding:0;
+    margin-top:10px;
+}
+
+#priorityList li{
+    display:flex;
+
+    align-items:center;
+
+    gap:6px;
+
+    background:var(--card-light);
+
+    padding:10px;
+
+    border-radius:10px;
+
+    margin-bottom:8px;
+
+    box-shadow:
+    0 2px 8px rgba(0,0,0,.15);
+}
+
+.rankText{
+    flex:1;
+    font-size:14px;
+}
+
+button{
+    border:none;
+
+    background:var(--button);
+
+    color:white;
+
+    padding:6px 10px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    transition:.2s ease;
+}
+
+button:hover{
+    background:var(--button-hover);
+}
+
+#exportBtn{
+    width:100%;
+
+    margin-top:12px;
+
+    padding:12px;
+
+    font-weight:bold;
+
+    font-size:15px;
+}
+
+::-webkit-scrollbar{
+    width:10px;
+}
+
+::-webkit-scrollbar-track{
+    background:#0f172a;
+}
+
+::-webkit-scrollbar-thumb{
+    background:#334155;
+    border-radius:20px;
+}
+
+::-webkit-scrollbar-thumb:hover{
+    background:#475569;
+}
+
+@media (max-width:900px){
+
+    .container{
+        flex-direction:column;
+    }
+
+    #priorityPanel{
+        width:100%;
+        min-width:unset;
+        position:static;
+    }
+
+}
+
+</style>
+</head>
+<body>
+<h1>OE & DE Elective Priority Planner</h1>
+<div class="container">
+<div id="courses">
+
+<h2>OE Courses</h2>
+
+<details open>
+<summary>CSE</summary>
+<label class="course"><input type="checkbox">CSO404 - Cryptography</label>
+<label class="course"><input type="checkbox">CSO504 - Machine Learning</label>
+<label class="course"><input type="checkbox">CSO505 - Soft Computing</label>
+</details>
+
+<details>
+<summary>ECE</summary>
+<label class="course"><input type="checkbox">ECD403 - Computer Networks</label>
+<label class="course"><input type="checkbox">ECD411 - Machine Learning & Artificial Intelligence</label>
+<label class="course"><input type="checkbox">ECO501 - Internet of Things</label>
+</details>
+
+<details>
+<summary>EE</summary>
+<label class="course"><input type="checkbox">EED513 - Power Quality</label>
+<label class="course"><input type="checkbox">EEO404 - Renewable Energy Systems and Energy Audit</label>
+</details>
+
+<details>
+<summary>Mechanical</summary>
+<label class="course"><input type="checkbox">MEO528 - Robotics</label>
+<label class="course"><input type="checkbox">MEO579 - Computational Fluid Dynamics</label>
+<label class="course"><input type="checkbox">MEO586 - Additive Manufacturing</label>
+</details>
+
+<details>
+<summary>Mining</summary>
+<label class="course"><input type="checkbox">MND403 - Geospatial Technology in Mining</label>
+<label class="course"><input type="checkbox">MND405 - Mine Safety Engineering</label>
+<label class="course"><input type="checkbox">MND406 - Mine Environmental Engineering</label>
+</details>
+
+<details>
+<summary>Mathematics & Computing</summary>
+<label class="course"><input type="checkbox">MCO401 - Partial Differential Equations</label>
+</details>
+
+<details>
+<summary>Physics</summary>
+<label class="course"><input type="checkbox">PHO400 - Nanoelectronics and Nanophotonics</label>
+<label class="course"><input type="checkbox">PHO401 - Introduction to Quantum Devices</label>
+<label class="course"><input type="checkbox">PHO504 - Optoelectronic Materials and Devices</label>
+</details>
+
+<details>
+<summary>Civil</summary>
+<label class="course"><input type="checkbox">CED542 - Prestressed Concrete Structures</label>
+<label class="course"><input type="checkbox">CEO402 - Optimization Methods</label>
+<label class="course"><input type="checkbox">CEO531 - Railway Geotechnics</label>
+</details>
+
+<details>
+<summary>Chemical</summary>
+<label class="course"><input type="checkbox">CHD411 - Catalytic Reaction Engineering</label>
+<label class="course"><input type="checkbox">CHO401 - Process Integration</label>
+<label class="course"><input type="checkbox">CHO402 - Biofuels & Biomass Conversion Technology</label>
+</details>
+
+<details>
+<summary>Environmental Science & Engineering</summary>
+<label class="course"><input type="checkbox">ESD405 - Climate Vulnerability and Risk Analysis</label>
+<label class="course"><input type="checkbox">ESD511 - Aerosols in the Atmosphere</label>
+<label class="course"><input type="checkbox">ESO405 - Cleaner Energy</label>
+</details>
+
+<details>
+<summary>Fuel & Mineral Engineering</summary>
+<label class="course"><input type="checkbox">FMO541 - Characterization of Materials</label>
+<label class="course"><input type="checkbox">FMO545 - Equipment Design</label>
+<label class="course"><input type="checkbox">FMO547 - Additive Manufacturing</label>
+</details>
+
+<details>
+<summary>Applied Geology / Geophysics</summary>
+<label class="course"><input type="checkbox">GLO523 - Atmosphere, Ocean and Climate Dynamics</label>
+<label class="course"><input type="checkbox">GLO532 - Environmental Geology</label>
+<label class="course"><input type="checkbox">GPO501 - Groundwater Geophysics</label>
+</details>
+
+<details>
+<summary>Humanities / Management / Petroleum</summary>
+<label class="course"><input type="checkbox">HSD525 - Advance Course in Applied Ethics</label>
+<label class="course"><input type="checkbox">HSD566 - Philosophy of Psychiatry</label>
+<label class="course"><input type="checkbox">MSO403 - Foundations of Management and Organizational Behaviour</label>
+<label class="course"><input type="checkbox">PEO401 - Petroleum Environment, Health and Safety Practices</label>
+</details>
+
+<h2>DE Courses</h2>
+
+<details>
+<summary>CSE</summary>
+<label class="course"><input type="checkbox">CSD502 - Cloud Computing</label>
+<label class="course"><input type="checkbox">CSD510 - Information Retrieval</label>
+</details>
+
+<details>
+<summary>ECE</summary>
+<label class="course"><input type="checkbox">ECD415 - Optical Communication</label>
+<label class="course"><input type="checkbox">ECD405 - Digital Systems Design using HDL</label>
+<label class="course"><input type="checkbox">ECD408 - EMI/EMC</label>
+</details>
+
+<details>
+<summary>EE</summary>
+<label class="course"><input type="checkbox">EED401 - Power System Protection and Switchgear</label>
+<label class="course"><input type="checkbox">EED403 - Industrial Power Electronics</label>
+</details>
+
+<details>
+<summary>Mechanical</summary>
+<label class="course"><input type="checkbox">MED401 - Energy Conversion Equipment</label>
+<label class="course"><input type="checkbox">MED540 - Fundamentals of Aeroacoustics</label>
+<label class="course"><input type="checkbox">MED547 - Convective and Two-phase Flow</label>
+<label class="course"><input type="checkbox">MED549 - Cryogenic Engineering</label>
+</details>
+
+<details>
+<summary>Mining</summary>
+<label class="course"><input type="checkbox">MND400 - Rock Excavation Engineering</label>
+<label class="course"><input type="checkbox">MND401 - Advanced Mine Ventilation</label>
+<label class="course"><input type="checkbox">MND402 - Open Pit Slope Analysis and Design</label>
+<label class="course"><input type="checkbox">MND404 - Mine System Engineering</label>
+</details>
+
+<details>
+<summary>Mathematics & Computing</summary>
+<label class="course"><input type="checkbox">MCD532 - Data Mining</label>
+<label class="course"><input type="checkbox">MCD538 - Time Series Analysis</label>
+<label class="course"><input type="checkbox">MCD557 - Finite Field Theory</label>
+</details>
+
+<details>
+<summary>Physics</summary>
+<label class="course"><input type="checkbox">PHD501 - Advanced Quantum Mechanics</label>
+<label class="course"><input type="checkbox">PHD506 - Characterization Techniques</label>
+<label class="course"><input type="checkbox">PHD509 - Advanced Condensed Matter Physics</label>
+<label class="course"><input type="checkbox">PHD510 - Quantum Computation and Information</label>
+</details>
+
+<details>
+<summary>Civil</summary>
+<label class="course"><input type="checkbox">CED401 - Traffic Engineering and Management</label>
+<label class="course"><input type="checkbox">CEO528 - Ground Improvement and Geosynthetics</label>
+</details>
+
+<details>
+<summary>Chemical</summary>
+<label class="course"><input type="checkbox">CHD418 - Electrochemical Science and Engineering</label>
+<label class="course"><input type="checkbox">CHD502 - Nanotechnology</label>
+</details>
+
+<details>
+<summary>Environmental Science & Engineering</summary>
+<label class="course"><input type="checkbox">ESD401 - Biodiversity Conservation</label>
+<label class="course"><input type="checkbox">ESD403 - Waste to Energy</label>
+<label class="course"><input type="checkbox">ESD502 - Environmental Biotechnology</label>
+<label class="course"><input type="checkbox">ESD512 - Groundwater Flow and Contaminant Transport Modelling</label>
+</details>
+
+<details>
+<summary>Fuel & Mineral Engineering</summary>
+<label class="course"><input type="checkbox">FMD461 - Computational Techniques and Modelling</label>
+<label class="course"><input type="checkbox">FMD464 - Mineral Policy and Economics</label>
+</details>
+
+<details>
+<summary>Applied Geology / Geophysics</summary>
+<label class="course"><input type="checkbox">GLD522 - Coalbed Methane, Shale Gas and Gas Hydrate Exploration</label>
+<label class="course"><input type="checkbox">GLD529 - Organic Geochemistry</label>
+<label class="course"><input type="checkbox">GLD531 - Sequence Stratigraphy and Basin Analysis</label>
+<label class="course"><input type="checkbox">GLD572 - Advanced Geostatistics and Exploration Economics</label>
+<label class="course"><input type="checkbox">GPD501 - Geothermics and Geodynamics</label>
+<label class="course"><input type="checkbox">GPD503 - Image Processing and Geographic Information System</label>
+</details>
+
+<details>
+<summary>Petroleum Engineering</summary>
+<label class="course"><input type="checkbox">PED401 - Offshore Drilling and Petroleum Production Practices</label>
+<label class="course"><input type="checkbox">PED402 - Enhanced Oil Recovery Techniques</label>
+<label class="course"><input type="checkbox">PED403 - Drilling System Design</label>
+<label class="course"><input type="checkbox">PED407 - Advanced Well Completion Practices</label>
+</details>
+
+</div>
+
+<div id="priorityPanel">
+<h2>Priority List</h2>
+<p>Tap a course to add/remove it.</p>
+<ul id="priorityList"></ul>
+<button id="exportBtn">Export Ranking</button>
+</div>
+</div>
+
+<script>
+let ranking = JSON.parse(localStorage.getItem("ranking")) || [];
+const priorityList = document.getElementById("priorityList");
+
+function save(){localStorage.setItem("ranking",JSON.stringify(ranking));}
+
+function render(){
+    priorityList.innerHTML="";
+
+    ranking.forEach((course,index)=>{
+        const li=document.createElement("li");
+        li.innerHTML=`
+            <span class="rankText">${index+1}. ${course}</span>
+            <button onclick="moveUp(${index})">▲</button>
+            <button onclick="moveDown(${index})">▼</button>
+            <button onclick="removeCourse(${index})">❌</button>
+        `;
+        priorityList.appendChild(li);
+    });
+
+    document.querySelectorAll(".course").forEach(el=>{
+        const course = el.textContent.trim();
+        const selected = ranking.includes(course);
+
+        el.classList.toggle("selected", selected);
+        el.querySelector("input").checked = selected;
+    });
+
+    save();
+}
+
+function moveUp(i){if(i===0)return;[ranking[i-1],ranking[i]]=[ranking[i],ranking[i-1]];render();}
+function moveDown(i){if(i===ranking.length-1)return;[ranking[i+1],ranking[i]]=[ranking[i],ranking[i+1]];render();}
+function removeCourse(i){ranking.splice(i,1);render();}
+
+document.querySelectorAll(".course input").forEach(cb=>{
+    cb.addEventListener("change",()=>{
+        const course = cb.parentElement.textContent.trim();
+        const idx = ranking.indexOf(course);
+
+        if(cb.checked){
+            if(idx === -1) ranking.push(course);
+        }else{
+            if(idx !== -1) ranking.splice(idx,1);
+        }
+
+        render();
+    });
+});
+
+document.getElementById("exportBtn").addEventListener("click",()=>{
+const text=ranking.map((c,i)=>`${i+1}. ${c}`).join("\n");
+navigator.clipboard.writeText(text);
+alert("Ranking copied to clipboard");
+});
+
+render();
+</script>
+</body>
+</html>
