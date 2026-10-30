@@ -333,25 +333,82 @@ summary:hover {
     list-style: none;
     max-height: calc(100vh - 280px);
     overflow-y: auto;
+    overflow-x: hidden;
     padding-right: 4px;
     margin-bottom: 16px;
+    position: relative;
 }
 
 #priorityList li {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 9px;
     background: rgba(255, 255, 255, 0.06);
     border: 1px solid rgba(255, 255, 255, 0.14);
     padding: 10px 12px;
     border-radius: 12px;
     margin-bottom: 8px;
-    transition: background 0.15s ease, border-color 0.15s ease;
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+    transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+#priorityList li:active {
+    cursor: grabbing;
+}
+
+#priorityList li.dragging {
+    opacity: 0.9;
+    background: rgba(36, 36, 40, 0.96);
+    border-color: var(--apple-blue);
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.65), 0 0 0 1.5px var(--apple-blue);
+    z-index: 100;
+    pointer-events: none;
+}
+
+.drop-indicator {
+    height: 3px;
+    background: var(--apple-blue);
+    border-radius: 980px;
+    box-shadow: 0 0 10px rgba(41, 151, 255, 0.95);
+    margin: 6px 4px;
+    position: relative;
+    pointer-events: none;
+    transition: transform 0.1s ease;
+}
+
+.drop-indicator::before {
+    content: "";
+    position: absolute;
+    left: -4px;
+    top: -3.5px;
+    width: 10px;
+    height: 10px;
+    background: var(--apple-blue);
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(41, 151, 255, 1);
 }
 
 #priorityList li:hover {
     background: rgba(255, 255, 255, 0.1);
     border-color: rgba(255, 255, 255, 0.22);
+}
+
+.drag-handle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    cursor: grab;
+    flex-shrink: 0;
+    opacity: 0.65;
+    transition: opacity 0.15s ease, color 0.15s ease;
+}
+
+#priorityList li:hover .drag-handle {
+    opacity: 1;
+    color: var(--text-secondary);
 }
 
 .rankBadge {
@@ -717,7 +774,7 @@ summary:hover {
             <h2>Priority List</h2>
             <span id="selectedCount" class="count-badge">0 selected</span>
         </div>
-        <p class="panel-desc">Reorder items using the arrows to rank your preferences.</p>
+        <p class="panel-desc">Drag and drop items to rank your preferences.</p>
         <ul id="priorityList"></ul>
         <div class="panel-actions">
             <button id="exportBtn">Copy Priority List</button>
@@ -744,6 +801,9 @@ function save() {
     localStorage.setItem("ranking", JSON.stringify(ranking));
 }
 
+const dropIndicator = document.createElement("div");
+dropIndicator.className = "drop-indicator";
+
 function render() {
     priorityList.innerHTML = "";
     selectedCount.textContent = `${ranking.length} selected`;
@@ -754,14 +814,96 @@ function render() {
         ranking.forEach((course, index) => {
             const li = document.createElement("li");
             li.innerHTML = `
+                <span class="drag-handle" title="Drag to reorder" aria-hidden="true">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                        <circle cx="8" cy="5" r="2.2"/><circle cx="16" cy="5" r="2.2"/>
+                        <circle cx="8" cy="12" r="2.2"/><circle cx="16" cy="12" r="2.2"/>
+                        <circle cx="8" cy="19" r="2.2"/><circle cx="16" cy="19" r="2.2"/>
+                    </svg>
+                </span>
                 <span class="rankBadge">${index + 1}</span>
                 <span class="rankText">${course}</span>
-                <div class="btn-group">
-                    <button class="icon-btn" onclick="moveUp(${index})" title="Move up" aria-label="Move up">▲</button>
-                    <button class="icon-btn" onclick="moveDown(${index})" title="Move down" aria-label="Move down">▼</button>
-                    <button class="icon-btn remove-btn" onclick="removeCourse(${index})" title="Remove" aria-label="Remove">✕</button>
-                </div>
+                <button class="icon-btn remove-btn" onclick="removeCourse(${index})" title="Remove" aria-label="Remove">✕</button>
             `;
+
+            li.addEventListener("pointerdown", (e) => {
+                if (e.target.closest(".remove-btn")) return;
+                if (e.button !== 0) return;
+
+                const startY = e.clientY;
+                const origIndex = index;
+                let isDragging = false;
+                let currentSlot = origIndex;
+
+                const onPointerMove = (me) => {
+                    const deltaY = me.clientY - startY;
+                    if (!isDragging) {
+                        if (Math.abs(deltaY) < 4) return;
+                        isDragging = true;
+                        li.classList.add("dragging");
+                        try { li.setPointerCapture(e.pointerId); } catch(err){}
+                    }
+
+                    // Constrain strictly to Y axis — omit left/right movement
+                    li.style.transform = `translate3d(0, ${deltaY}px, 0)`;
+
+                    // Auto-scroll list if dragging near edges
+                    const listRect = priorityList.getBoundingClientRect();
+                    if (me.clientY < listRect.top + 35) {
+                        priorityList.scrollTop -= 6;
+                    } else if (me.clientY > listRect.bottom - 35) {
+                        priorityList.scrollTop += 6;
+                    }
+
+                    // Highlight the between place where it will be entered
+                    const otherItems = Array.from(priorityList.querySelectorAll("li:not(.dragging)"));
+                    let targetSlot = otherItems.length;
+                    let insertBeforeEl = null;
+
+                    for (let i = 0; i < otherItems.length; i++) {
+                        const rect = otherItems[i].getBoundingClientRect();
+                        const midY = rect.top + rect.height / 2;
+                        if (me.clientY < midY) {
+                            targetSlot = i;
+                            insertBeforeEl = otherItems[i];
+                            break;
+                        }
+                    }
+
+                    currentSlot = targetSlot;
+                    if (insertBeforeEl) {
+                        priorityList.insertBefore(dropIndicator, insertBeforeEl);
+                    } else {
+                        priorityList.appendChild(dropIndicator);
+                    }
+                };
+
+                const onPointerUp = (ue) => {
+                    window.removeEventListener("pointermove", onPointerMove);
+                    window.removeEventListener("pointerup", onPointerUp);
+                    window.removeEventListener("pointercancel", onPointerUp);
+
+                    if (isDragging) {
+                        try { li.releasePointerCapture(e.pointerId); } catch(err){}
+                        li.classList.remove("dragging");
+                        li.style.transform = "";
+                        if (dropIndicator.parentNode) {
+                            dropIndicator.parentNode.removeChild(dropIndicator);
+                        }
+
+                        if (origIndex !== currentSlot) {
+                            const [moved] = ranking.splice(origIndex, 1);
+                            ranking.splice(currentSlot, 0, moved);
+                            render();
+                        }
+                    }
+                };
+
+                window.addEventListener("pointermove", onPointerMove);
+                window.addEventListener("pointerup", onPointerUp);
+                window.addEventListener("pointercancel", onPointerUp);
+            });
+
             priorityList.appendChild(li);
         });
     }
@@ -775,18 +917,6 @@ function render() {
     });
 
     save();
-}
-
-function moveUp(i) {
-    if (i === 0) return;
-    [ranking[i - 1], ranking[i]] = [ranking[i], ranking[i - 1]];
-    render();
-}
-
-function moveDown(i) {
-    if (i === ranking.length - 1) return;
-    [ranking[i + 1], ranking[i]] = [ranking[i], ranking[i + 1]];
-    render();
 }
 
 function removeCourse(i) {
