@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Open Elective Priority Planner — 8th Semester</title>
+<style>
+:root {
+    --bg: #000000;
+    --surface: rgba(30, 30, 32, 0.82);
+    --surface-hover: rgba(46, 46, 50, 0.9);
+    --surface-item-hover: rgba(255, 255, 255, 0.09);
+    --border: rgba(255, 255, 255, 0.18);
+    --border-subtle: rgba(255, 255, 255, 0.11);
+
+    --text: #ffffff;
+    --text-secondary: #d1d1d6;
+    --text-muted: #98989d;
+
+    --apple-blue: #2997ff;
+    --apple-blue-hover: #0077ed;
+    --apple-blue-subtle: rgba(41, 151, 255, 0.2);
+
+    --apple-red: #ff453a;
+
+    --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font);
+    color: var(--text);
+    background-color: #000000;
+    background-image: 
+        radial-gradient(ellipse 70% 45% at 50% -10%, rgba(120, 119, 198, 0.25), transparent 70%),
+        radial-gradient(ellipse 50% 35% at 85% 15%, rgba(41, 151, 255, 0.12), transparent 60%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    padding: 40px 24px 72px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    letter-spacing: -0.012em;
+}
+
+.header {
+    text-align: center;
+    max-width: 760px;
+    margin: 0 auto 32px;
+}
+
+.eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--apple-blue);
+    background: var(--apple-blue-subtle);
+    padding: 5px 14px;
+    border-radius: 980px;
+    margin-bottom: 12px;
+}
+
+h1 {
+    font-size: 40px;
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    line-height: 1.15;
+    color: #ffffff;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    font-size: 16.5px;
+    color: var(--text-secondary);
+    font-weight: 400;
+    line-height: 1.45;
+}
+
+.container {
+    max-width: 1320px;
+    margin: 0 auto;
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+}
+
+#courses {
+    flex: 1.6;
+    min-width: 0;
+}
+
+.search-wrapper {
+    position: relative;
+    margin-bottom: 18px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    pointer-events: none;
+}
+
+#courseSearch {
+    width: 100%;
+    padding: 14px 16px 14px 44px;
+    font-family: var(--font);
+    font-size: 15px;
+    color: #ffffff;
+    background: var(--surface);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    outline: none;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#courseSearch:focus {
+    border-color: var(--apple-blue);
+    background: rgba(38, 38, 42, 0.95);
+    box-shadow: 0 0 0 3px rgba(41, 151, 255, 0.25);
+}
+
+#courseSearch::placeholder {
+    color: var(--text-muted);
+}
+
+.section-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 6px 4px 14px;
+}
+
+.section-label h2 {
+    font-size: 13.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    color: var(--text-secondary);
+}
+
+.section-label .hint {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+details {
+    background: var(--surface);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+details[open] {
+    border-color: rgba(255, 255, 255, 0.24);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+}
+
+summary {
+    padding: 15px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.03);
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    user-select: none;
+    transition: background 0.15s ease;
+    list-style: none;
+}
+
+summary::-webkit-details-marker {
+    display: none;
+}
+
+summary::after {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-right: 2px solid var(--text-secondary);
+    border-bottom: 2px solid var(--text-secondary);
+    transform: rotate(45deg);
+    transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    margin-right: 4px;
+}
+
+details[open] summary {
+    background: rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+details[open] summary::after {
+    transform: rotate(-135deg);
+}
+
+summary:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.course {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 13px 18px;
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 450;
+    line-height: 1.45;
+    transition: background 0.14s ease, color 0.14s ease;
+    border-top: 1px solid rgba(255, 255, 255, 0.09);
+    background: rgba(255, 255, 255, 0.015);
+    user-select: none;
+}
+
+.course:nth-child(even) {
+    background: rgba(255, 255, 255, 0.035);
+}
+
+.course:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+.course.selected {
+    background: var(--apple-blue-subtle);
+    border-top-color: rgba(41, 151, 255, 0.3);
+    color: #ffffff;
+    font-weight: 500;
+}
+
+.course input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 1.8px solid rgba(255, 255, 255, 0.38);
+    border-radius: 6px;
+    outline: none;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.08);
+    position: relative;
+    flex-shrink: 0;
+    transition: all 0.16s ease;
+}
+
+.course:hover input[type="checkbox"] {
+    border-color: rgba(255, 255, 255, 0.7);
+}
+
+.course input[type="checkbox"]:checked {
+    background: var(--apple-blue);
+    border-color: var(--apple-blue);
+}
+
+.course input[type="checkbox"]:checked::after {
+    content: "";
+    position: absolute;
+    left: 6px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+#priorityPanel {
+    flex: 1;
+    min-width: 330px;
+    max-width: 440px;
+    background: var(--surface);
+    backdrop-filter: blur(28px) saturate(180%);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    border: 1px solid var(--border);
+    padding: 22px;
+    border-radius: 18px;
+    position: sticky;
+    top: 20px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+#priorityPanel h2 {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #ffffff;
+    margin: 0;
+}
+
+.count-badge {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--apple-blue);
+    background: var(--apple-blue-subtle);
+    padding: 3px 10px;
+    border-radius: 980px;
+}
+
+.panel-desc {
+    font-size: 13.5px;
+    color: var(--text-secondary);
+    margin-bottom: 14px;
+}
+
+#priorityList {
+    list-style: none;
+    max-height: calc(100vh - 280px);
+    overflow-y: auto;
+    padding-right: 4px;
+    margin-bottom: 16px;
+}
+
+#priorityList li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    padding: 10px 12px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+#priorityList li:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.22);
+}
+
+.rankBadge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(41, 151, 255, 0.2);
+    color: var(--apple-blue);
+    font-size: 11.5px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.rankText {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+    color: #ffffff;
+}
+
+.btn-group {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.icon-btn {
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    transition: all 0.15s ease;
+}
+
+.icon-btn:hover {
+    background: rgba(255, 255, 255, 0.22);
+    transform: scale(1.05);
+}
+
+.icon-btn.remove-btn:hover {
+    background: rgba(255, 69, 58, 0.3);
+    color: var(--apple-red);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 34px 14px;
+    color: var(--text-muted);
+    font-size: 13.5px;
+    line-height: 1.5;
+    border: 1px dashed var(--border-subtle);
+    border-radius: 12px;
+}
+
+.panel-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+#exportBtn {
+    flex: 2;
+    background: var(--apple-blue);
+    color: #ffffff;
+    font-family: var(--font);
+    font-size: 14.5px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    padding: 12px 16px;
+    border-radius: 980px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(41, 151, 255, 0.35);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#exportBtn:hover {
+    background: var(--apple-blue-hover);
+    box-shadow: 0 6px 20px rgba(41, 151, 255, 0.5);
+    transform: translateY(-1px);
+}
+
+#exportBtn:active {
+    transform: scale(0.98);
+}
+
+.clear-btn {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-subtle);
+    border-radius: 980px;
+    font-family: var(--font);
+    font-size: 13.5px;
+    font-weight: 500;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.clear-btn:hover {
+    background: rgba(255, 69, 58, 0.2);
+    color: var(--apple-red);
+    border-color: rgba(255, 69, 58, 0.35);
+}
+
+.clear-btn:active {
+    transform: scale(0.98);
+}
+
+.toast {
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    background: rgba(28, 28, 30, 0.95);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    padding: 10px 22px;
+    border-radius: 980px;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55);
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 1000;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 980px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.35);
+}
+
+@media (max-width: 640px) {
+    body {
+        padding: 20px 14px 40px;
+    }
+    h1 {
+        font-size: 28px;
+    }
+    .container {
+        flex-direction: column;
+        gap: 20px;
+    }
+    #priorityPanel {
+        width: 100%;
+        min-width: unset;
+        max-width: none;
+        position: static;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+    #priorityList {
+        max-height: 280px;
+    }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <div class="eyebrow">
+        <span>8th Semester • Open Electives</span>
+    </div>
+    <h1>Elective Priority Planner</h1>
+    <p class="subtitle">Select and reorder your preferred electives to generate your registration priority list.</p>
+</div>
+
+<div class="container">
+    <div id="courses">
+        <div class="search-wrapper">
+            <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" id="courseSearch" placeholder="Search by course code, name, or branch..." autocomplete="off">
+        </div>
+
+        <div class="section-label">
+            <h2>Available Courses</h2>
+            <span class="hint">Click a course to add</span>
+        </div>
+
+<details open>
+<summary>CSE</summary>
+<label class="course"><input type="checkbox">CSD401 - Advanced Algorithms</label>
+<label class="course"><input type="checkbox">CSD513 - Internet of Things</label>
+<label class="course"><input type="checkbox">CSD516 - Optimization Techniques</label>
+<label class="course"><input type="checkbox">CSO302 - Graph Theory</label>
+<label class="course"><input type="checkbox">CSO303 - Principles of Artificial Intelligence</label>
+<label class="course"><input type="checkbox">CSO502 - Data Analytics</label>
+<label class="course"><input type="checkbox">CSO503 - Data Mining</label>
+<label class="course"><input type="checkbox">CSO506 - Principles of Blockchain Technologies</label>
+<label class="course"><input type="checkbox">CSO508 - Building Software Systems</label>
+</details>
+
+<details>
+<summary>ECE</summary>
+<label class="course"><input type="checkbox">ECD404 - Digital Image Processing</label>
+<label class="course"><input type="checkbox">ECD406 - EDA for VLSI Design</label>
+<label class="course"><input type="checkbox">ECD419 - Satellite Communication</label>
+<label class="course"><input type="checkbox">ECD501 - Metamaterials and CRLH Transmission Lines</label>
+<label class="course"><input type="checkbox">ECD517 - VLSI Signal Processing</label>
+<label class="course"><input type="checkbox">ECD564 - On-Chip Interconnects</label>
+<label class="course"><input type="checkbox">ECO401 - UAV Sensors</label>
+<label class="course"><input type="checkbox">ECO520 - Optical Networks</label>
+<label class="course"><input type="checkbox">ECO561 - Embedded System Design</label>
+</details>
+
+<details>
+<summary>EE</summary>
+<label class="course"><input type="checkbox">EED405 - Instrumentation</label>
+<label class="course"><input type="checkbox">EED406 - Special Purpose Electric Machines and Drives</label>
+<label class="course"><input type="checkbox">EEO406 - Modern Sensors and Signal Conditioning Circuits</label>
+<label class="course"><input type="checkbox">EEO407 - Condition Monitoring of Electrical Machines</label>
+</details>
+
+<details>
+<summary>Mechanical</summary>
+<label class="course"><input type="checkbox">MED521 - Theory of Lubrication</label>
+<label class="course"><input type="checkbox">MED529 - Composite Materials</label>
+<label class="course"><input type="checkbox">MED546 - Conduction and Radiation</label>
+<label class="course"><input type="checkbox">MEO522 - Condition Monitoring of Machines</label>
+<label class="course"><input type="checkbox">MEO528 - Robotics</label>
+<label class="course"><input type="checkbox">MEO534 - Automation and Control</label>
+<label class="course"><input type="checkbox">MEO579 - Computational Fluid Dynamics</label>
+<label class="course"><input type="checkbox">MMD505 - Fluid Flow Machines in Mines</label>
+</details>
+
+<details>
+<summary>Mining</summary>
+<label class="course"><input type="checkbox">MND407 - Underground Space Technology</label>
+<label class="course"><input type="checkbox">MND408 - Innovative Mining Systems</label>
+<label class="course"><input type="checkbox">MND411 - Advanced Underground Mining Methods</label>
+<label class="course"><input type="checkbox">MND412 - Deep Coal Mining</label>
+</details>
+
+<details>
+<summary>Mathematics & Computing</summary>
+<label class="course"><input type="checkbox">MCC535 - Soft Computing Techniques</label>
+<label class="course"><input type="checkbox">MCD511 - Mathematical Ecology</label>
+<label class="course"><input type="checkbox">MCD517 - Financial Mathematics</label>
+<label class="course"><input type="checkbox">MCO531 - Stochastic Processes</label>
+<label class="course"><input type="checkbox">MCO532 - Advanced Multivariate Analysis</label>
+</details>
+
+<details>
+<summary>Physics</summary>
+<label class="course"><input type="checkbox">PHD502 - Computational Physics</label>
+<label class="course"><input type="checkbox">PHD503 - High Energy Physics</label>
+<label class="course"><input type="checkbox">PHD511 - Astrophysics and Cosmology</label>
+<label class="course"><input type="checkbox">PHD513 - Semiconductor Physics and Technology</label>
+<label class="course"><input type="checkbox">PHO303 - Physics for Society</label>
+<label class="course"><input type="checkbox">PHO401 - Introduction to Quantum Devices</label>
+<label class="course"><input type="checkbox">PHO503 - Physics of Nanomaterials</label>
+<label class="course"><input type="checkbox">PHO572 - Photonics and Fibre Optics</label>
+</details>
+
+<details>
+<summary>Civil</summary>
+<label class="course"><input type="checkbox">CED528 - Structural Dynamics</label>
+<label class="course"><input type="checkbox">CED531 - Advanced Design of Structures</label>
+<label class="course"><input type="checkbox">CED533 - Hydroclimatology</label>
+<label class="course"><input type="checkbox">CEO524 - Finite Element Method</label>
+</details>
+
+<details>
+<summary>Chemical</summary>
+<label class="course"><input type="checkbox">CHD404 - Bioprocess Technology</label>
+<label class="course"><input type="checkbox">CHD405 - Energy Technology</label>
+<label class="course"><input type="checkbox">CHD407 - Materials Characterization</label>
+<label class="course"><input type="checkbox">CHD413 - Advanced Separation Processes</label>
+<label class="course"><input type="checkbox">CHD415 - Interfacial Phenomena and Microfluidics</label>
+<label class="course"><input type="checkbox">CHO404 - AI in Process Industries</label>
+</details>
+
+<details>
+<summary>Environmental Science & Engineering</summary>
+<label class="course"><input type="checkbox">ESD406 - Environmental Nano Technology</label>
+<label class="course"><input type="checkbox">ESD503 - Environmental Modelling</label>
+<label class="course"><input type="checkbox">ESD505 - Advanced Water and Wastewater Treatment</label>
+<label class="course"><input type="checkbox">ESD506 - Biomedical and Hazardous Waste Management</label>
+<label class="course"><input type="checkbox">ESD507 - Environmental Biogeochemistry</label>
+<label class="course"><input type="checkbox">ESO505 - Climate Change and Modelling</label>
+</details>
+
+<details>
+<summary>Fuel & Mineral Engineering</summary>
+<label class="course"><input type="checkbox">FMD462 - Process Control and Plant Layout</label>
+<label class="course"><input type="checkbox">FMD522 - Coal Preparation</label>
+<label class="course"><input type="checkbox">FMD531 - Alternate Energy Systems</label>
+<label class="course"><input type="checkbox">FMD536 - Surface Engineering</label>
+<label class="course"><input type="checkbox">FMD538 - Processing and Dewatering of Fine Particles</label>
+<label class="course"><input type="checkbox">FMD540 - Size Enlargement Processes</label>
+<label class="course"><input type="checkbox">FMO544 - Clean Coal Technology</label>
+</details>
+
+<details>
+<summary>Applied Geology / Geophysics</summary>
+<label class="course"><input type="checkbox">GLD529 - Organic Geochemistry</label>
+<label class="course"><input type="checkbox">GLD571 - Petroleum Exploration and Micropalaeontology</label>
+<label class="course"><input type="checkbox">GLD593 - Applied Hydrogeology</label>
+<label class="course"><input type="checkbox">GLD594 - Geotechniques of Dams, Tunnels and Underground Space</label>
+<label class="course"><input type="checkbox">GLO502 - Geoarchaeology</label>
+<label class="course"><input type="checkbox">GLO597 - Engineering Geomorphology</label>
+<label class="course"><input type="checkbox">GPD502 - Formation Evaluation</label>
+<label class="course"><input type="checkbox">GPD508 - Seismological Data Analysis</label>
+<label class="course"><input type="checkbox">GPD510 - Reservoir Geophysics and Deep Water Imaging</label>
+<label class="course"><input type="checkbox">GPO503 - Artificial Intelligence and Machine Learning in Geosciences</label>
+</details>
+
+<details>
+<summary>Humanities & Management</summary>
+<label class="course"><input type="checkbox">HSD530 - Indian Philosophy of Mind</label>
+<label class="course"><input type="checkbox">HSD553 - Sociology of Economic Life</label>
+<label class="course"><input type="checkbox">MSO403 - Foundations of Management and Organizational Behaviour</label>
+</details>
+
+<details>
+<summary>Petroleum Engineering</summary>
+<label class="course"><input type="checkbox">PED404 - Petroleum Engineering Design</label>
+<label class="course"><input type="checkbox">PED405 - Pipeline Engineering</label>
+<label class="course"><input type="checkbox">PED406 - Reservoir Modeling and Simulation</label>
+<label class="course"><input type="checkbox">PED502 - Well Intervention, Workover and Stimulation Techniques</label>
+<label class="course"><input type="checkbox">PEO405 - Integrated Reservoir Management</label>
+<label class="course"><input type="checkbox">PEO506 - Carbon Capture And Sequestration</label>
+</details>
+</div>
+
+    <div id="priorityPanel">
+        <div class="panel-header">
+            <h2>Priority List</h2>
+            <span id="selectedCount" class="count-badge">0 selected</span>
+        </div>
+        <p class="panel-desc">Reorder items using the arrows to rank your preferences.</p>
+        <ul id="priorityList"></ul>
+        <div class="panel-actions">
+            <button id="exportBtn">Copy Priority List</button>
+            <button id="clearBtn" class="clear-btn">Clear List</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+let ranking = JSON.parse(localStorage.getItem("ranking")) || [];
+const priorityList = document.getElementById("priorityList");
+const selectedCount = document.getElementById("selectedCount");
+const toast = document.getElementById("toast");
+
+function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add("show");
+    setTimeout(() => toast.classList.remove("show"), 2200);
+}
+
+function save() {
+    localStorage.setItem("ranking", JSON.stringify(ranking));
+}
+
+function render() {
+    priorityList.innerHTML = "";
+    selectedCount.textContent = `${ranking.length} selected`;
+
+    if (ranking.length === 0) {
+        priorityList.innerHTML = `<div class="empty-state">No electives selected yet.<br>Click subjects on the left to prioritize.</div>`;
+    } else {
+        ranking.forEach((course, index) => {
+            const li = document.createElement("li");
+            li.innerHTML = `
+                <span class="rankBadge">${index + 1}</span>
+                <span class="rankText">${course}</span>
+                <div class="btn-group">
+                    <button class="icon-btn" onclick="moveUp(${index})" title="Move up" aria-label="Move up">▲</button>
+                    <button class="icon-btn" onclick="moveDown(${index})" title="Move down" aria-label="Move down">▼</button>
+                    <button class="icon-btn remove-btn" onclick="removeCourse(${index})" title="Remove" aria-label="Remove">✕</button>
+                </div>
+            `;
+            priorityList.appendChild(li);
+        });
+    }
+
+    document.querySelectorAll(".course").forEach(el => {
+        const course = el.textContent.trim();
+        const selected = ranking.includes(course);
+
+        el.classList.toggle("selected", selected);
+        el.querySelector("input").checked = selected;
+    });
+
+    save();
+}
+
+function moveUp(i) {
+    if (i === 0) return;
+    [ranking[i - 1], ranking[i]] = [ranking[i], ranking[i - 1]];
+    render();
+}
+
+function moveDown(i) {
+    if (i === ranking.length - 1) return;
+    [ranking[i + 1], ranking[i]] = [ranking[i], ranking[i + 1]];
+    render();
+}
+
+function removeCourse(i) {
+    ranking.splice(i, 1);
+    render();
+}
+
+document.querySelectorAll(".course input").forEach(cb => {
+    cb.addEventListener("change", () => {
+        const course = cb.parentElement.textContent.trim();
+        const idx = ranking.indexOf(course);
+
+        if (cb.checked) {
+            if (idx === -1) ranking.push(course);
+        } else {
+            if (idx !== -1) ranking.splice(idx, 1);
+        }
+
+        render();
+    });
+});
+
+document.getElementById("exportBtn").addEventListener("click", () => {
+    if (ranking.length === 0) {
+        showToast("Please select at least one course first");
+        return;
+    }
+    const text = ranking.map((c, i) => `${i + 1}. ${c}`).join("\n");
+    navigator.clipboard.writeText(text).then(() => {
+        showToast("✓ Priority list copied to clipboard");
+    }).catch(() => {
+        showToast("✓ Copied to clipboard");
+    });
+});
+
+document.getElementById("clearBtn").addEventListener("click", () => {
+    if (ranking.length === 0) return;
+    ranking = [];
+    render();
+    showToast("Priority list cleared");
+});
+
+// Real-time search filter
+document.getElementById("courseSearch").addEventListener("input", (e) => {
+    const q = e.target.value.toLowerCase().trim();
+    document.querySelectorAll("details").forEach(det => {
+        let anyVisible = false;
+        det.querySelectorAll(".course").forEach(c => {
+            const match = c.textContent.toLowerCase().includes(q);
+            c.style.display = match ? "flex" : "none";
+            if (match) anyVisible = true;
+        });
+        det.style.display = anyVisible ? "" : "none";
+        if (q.length > 0 && anyVisible) det.open = true;
+    });
+});
+
+render();
+</script>
+</body>
+</html>
