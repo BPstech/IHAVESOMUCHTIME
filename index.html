@@ -630,23 +630,23 @@ summary:hover {
     box-shadow: 0 2px 8px rgba(41, 151, 255, 0.3);
 }
 
-/* Gmail-style Compact Faculty Popup */
+/* Gmail-style Compact Faculty Popup (150% scaled) */
 .faculty-popup {
     position: fixed;
     z-index: 9999;
-    width: 320px;
+    width: 480px;
     max-width: calc(100vw - 24px);
-    background: rgba(28, 28, 32, 0.97);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    border-radius: 16px;
-    padding: 12px 14px;
-    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.65), 0 0 1px 1px rgba(255, 255, 255, 0.1);
+    background: rgba(28, 28, 32, 0.98);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 18px;
+    padding: 18px 20px;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.7), 0 0 1px 1px rgba(255, 255, 255, 0.12);
     opacity: 0;
     visibility: hidden;
-    transform: scale(0.95) translateY(-4px);
-    transition: opacity 0.14s ease, transform 0.14s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.14s ease;
+    transform: scale(0.96) translateY(-4px);
+    transition: opacity 0.15s ease, transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.15s ease;
     pointer-events: none;
 }
 
@@ -658,7 +658,7 @@ summary:hover {
 }
 
 .faculty-popup.place-above {
-    transform: scale(0.95) translateY(4px);
+    transform: scale(0.96) translateY(4px);
 }
 .faculty-popup.visible.place-above {
     transform: scale(1) translateY(0);
@@ -667,18 +667,18 @@ summary:hover {
 .faculty-popup-content {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 16px;
 }
 
 .faculty-popup-avatar-wrap {
-    width: 52px;
-    height: 52px;
+    width: 78px;
+    height: 78px;
     border-radius: 50%;
     flex-shrink: 0;
     overflow: hidden;
     background: #1c1c1e;
-    border: 2px solid rgba(41, 151, 255, 0.6);
-    box-shadow: 0 4px 12px rgba(41, 151, 255, 0.2);
+    border: 2.5px solid rgba(41, 151, 255, 0.65);
+    box-shadow: 0 6px 18px rgba(41, 151, 255, 0.25);
     position: relative;
 }
 
@@ -698,7 +698,7 @@ summary:hover {
     display: none;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
+    font-size: 24px;
     font-weight: 700;
 }
 
@@ -710,47 +710,44 @@ summary:hover {
 .faculty-popup-header {
     display: flex;
     align-items: center;
-    gap: 6px;
-    margin-bottom: 2px;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 4px;
 }
 
 .faculty-popup-name {
-    font-size: 13.5px;
-    font-weight: 650;
+    font-size: 16px;
+    font-weight: 700;
     color: #ffffff;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    line-height: 1.3;
 }
 
 .faculty-popup-badge {
-    font-size: 10px;
-    font-weight: 600;
+    font-size: 10.5px;
+    font-weight: 650;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.05em;
     color: var(--apple-blue);
     background: var(--apple-blue-subtle);
-    padding: 1px 7px;
+    padding: 3px 9px;
     border-radius: 980px;
     flex-shrink: 0;
+    white-space: nowrap;
 }
 
 .faculty-popup-dept {
-    font-size: 12px;
+    font-size: 13px;
     color: var(--text-secondary);
-    line-height: 1.35;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-bottom: 6px;
+    line-height: 1.4;
+    margin-bottom: 8px;
 }
 
 .faculty-popup-footer {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 8px;
-    font-size: 11px;
+    gap: 10px;
+    font-size: 12px;
 }
 
 .faculty-popup-inst {
@@ -758,13 +755,17 @@ summary:hover {
 }
 
 .faculty-popup-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
     color: var(--apple-blue);
     text-decoration: none;
-    font-weight: 500;
-    padding: 2px 8px;
-    border-radius: 6px;
-    background: rgba(41, 151, 255, 0.12);
-    border: 1px solid rgba(41, 151, 255, 0.25);
+    font-weight: 600;
+    font-size: 12.5px;
+    padding: 4px 12px;
+    border-radius: 8px;
+    background: rgba(41, 151, 255, 0.14);
+    border: 1px solid rgba(41, 151, 255, 0.28);
     transition: all 0.15s ease;
 }
 
@@ -772,6 +773,7 @@ summary:hover {
     background: var(--apple-blue);
     color: #ffffff;
     text-decoration: none;
+    box-shadow: 0 4px 12px rgba(41, 151, 255, 0.35);
 }
 </style>
 </head>
@@ -1194,7 +1196,7 @@ document.getElementById("courseSearch").addEventListener("input", (e) => {
     });
 });
 
-// Gmail-style Faculty Popover Handling
+// Gmail-style Faculty Popover Handling (150% scaled)
 const facultyPopup = document.getElementById("facultyPopup");
 const popupImg = document.getElementById("popupImg");
 const popupAvatarFallback = document.getElementById("popupAvatarFallback");
@@ -1212,6 +1214,16 @@ function getInitials(name) {
     return clean.slice(0, 2).toUpperCase() || "IIT";
 }
 
+function cleanImageUrl(url) {
+    if (!url) return "";
+    try {
+        // Decode any existing percent-encoded characters first, then encode cleanly
+        return encodeURI(decodeURI(url.trim()));
+    } catch (e) {
+        return url.trim();
+    }
+}
+
 function showFacultyPopup(anchorEl, data) {
     if (!facultyPopup) return;
 
@@ -1225,14 +1237,14 @@ function showFacultyPopup(anchorEl, data) {
     popupDept.textContent = data.dept || "IIT (ISM) Dhanbad";
     popupLink.href = data.url || "https://www.iitism.ac.in/all-faculty";
 
-    const rawImg = data.img ? data.img.trim() : "";
-    const hasValidImg = rawImg.length > 0 && !rawImg.endsWith("/.jpg");
+    const cleanImg = cleanImageUrl(data.img);
+    const hasValidImg = cleanImg.length > 0 && !cleanImg.endsWith("/.jpg");
 
     popupAvatarFallback.style.display = "none";
     popupImg.style.display = "block";
 
     if (hasValidImg) {
-        popupImg.src = encodeURI(rawImg);
+        popupImg.src = cleanImg;
         popupImg.onerror = () => {
             popupImg.style.display = "none";
             popupAvatarFallback.textContent = getInitials(data.name || "");
@@ -1244,10 +1256,10 @@ function showFacultyPopup(anchorEl, data) {
         popupAvatarFallback.style.display = "flex";
     }
 
-    // Calculate position right next to clicked badge
+    // Position 480px popup directly next to clicked badge
     const rect = anchorEl.getBoundingClientRect();
-    const popupWidth = 320;
-    const margin = 8;
+    const popupWidth = Math.min(480, window.innerWidth - 24);
+    const margin = 10;
 
     let left = rect.left + (rect.width / 2) - (popupWidth / 2);
     if (left < 12) left = 12;
@@ -1255,7 +1267,7 @@ function showFacultyPopup(anchorEl, data) {
         left = window.innerWidth - popupWidth - 12;
     }
 
-    const popupEstimatedHeight = 90;
+    const popupEstimatedHeight = 120;
     let top = rect.bottom + margin;
     let placeAbove = false;
     if (top + popupEstimatedHeight > window.innerHeight && rect.top - popupEstimatedHeight - margin > 0) {
