@@ -630,182 +630,149 @@ summary:hover {
     box-shadow: 0 2px 8px rgba(41, 151, 255, 0.3);
 }
 
-/* Faculty Profile Modal */
-.faculty-modal {
+/* Gmail-style Compact Faculty Popup */
+.faculty-popup {
     position: fixed;
-    inset: 0;
-    z-index: 2000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
+    z-index: 9999;
+    width: 320px;
+    max-width: calc(100vw - 24px);
+    background: rgba(28, 28, 32, 0.97);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 16px;
+    padding: 12px 14px;
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.65), 0 0 1px 1px rgba(255, 255, 255, 0.1);
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.22s ease;
+    transform: scale(0.95) translateY(-4px);
+    transition: opacity 0.14s ease, transform 0.14s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.14s ease;
+    pointer-events: none;
 }
 
-.faculty-modal.active {
+.faculty-popup.visible {
     opacity: 1;
     visibility: visible;
+    transform: scale(1) translateY(0);
+    pointer-events: auto;
 }
 
-.faculty-modal-backdrop {
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.75);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
+.faculty-popup.place-above {
+    transform: scale(0.95) translateY(4px);
 }
-
-.faculty-modal-card {
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    max-width: 410px;
-    background: rgba(26, 26, 29, 0.95);
-    backdrop-filter: blur(36px) saturate(180%);
-    -webkit-backdrop-filter: blur(36px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    border-radius: 24px;
-    padding: 34px 26px 26px;
-    text-align: center;
-    box-shadow: 0 28px 70px rgba(0, 0, 0, 0.75), 0 0 1px 1px rgba(255, 255, 255, 0.1);
-    transform: scale(0.92) translateY(12px);
-    transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.faculty-modal.active .faculty-modal-card {
+.faculty-popup.visible.place-above {
     transform: scale(1) translateY(0);
 }
 
-.faculty-modal-close {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    color: var(--text-secondary);
+.faculty-popup-content {
     display: flex;
     align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 14px;
-    transition: all 0.18s ease;
+    gap: 12px;
 }
 
-.faculty-modal-close:hover {
-    background: rgba(255, 255, 255, 0.2);
-    color: #ffffff;
-    transform: scale(1.08);
-}
-
-.faculty-avatar-wrap {
-    position: relative;
-    width: 140px;
-    height: 140px;
-    margin: 0 auto 18px;
+.faculty-popup-avatar-wrap {
+    width: 52px;
+    height: 52px;
     border-radius: 50%;
-    padding: 4px;
-    background: linear-gradient(135deg, rgba(41, 151, 255, 0.7), rgba(120, 119, 198, 0.5));
-    box-shadow: 0 10px 30px rgba(41, 151, 255, 0.25);
+    flex-shrink: 0;
+    overflow: hidden;
+    background: #1c1c1e;
+    border: 2px solid rgba(41, 151, 255, 0.6);
+    box-shadow: 0 4px 12px rgba(41, 151, 255, 0.2);
+    position: relative;
 }
 
-.faculty-avatar-wrap img {
+.faculty-popup-avatar-wrap img {
     width: 100%;
     height: 100%;
-    border-radius: 50%;
     object-fit: cover;
     display: block;
-    background: #1c1c1e;
 }
 
-.faculty-avatar-fallback {
+.faculty-popup-fallback {
     position: absolute;
-    inset: 4px;
+    inset: 0;
     border-radius: 50%;
-    background: linear-gradient(135deg, #2c2c2e, #1c1c1e);
+    background: linear-gradient(135deg, #3a3a3c, #1c1c1e);
     color: #ffffff;
     display: none;
     align-items: center;
     justify-content: center;
-    font-size: 38px;
+    font-size: 16px;
     font-weight: 700;
-    letter-spacing: -0.02em;
 }
 
-.faculty-badge {
-    display: inline-flex;
+.faculty-popup-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.faculty-popup-header {
+    display: flex;
     align-items: center;
-    font-size: 11.5px;
+    gap: 6px;
+    margin-bottom: 2px;
+}
+
+.faculty-popup-name {
+    font-size: 13.5px;
     font-weight: 650;
+    color: #ffffff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.faculty-popup-badge {
+    font-size: 10px;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.07em;
+    letter-spacing: 0.04em;
     color: var(--apple-blue);
     background: var(--apple-blue-subtle);
-    padding: 4px 14px;
+    padding: 1px 7px;
     border-radius: 980px;
-    margin-bottom: 10px;
+    flex-shrink: 0;
 }
 
-.faculty-name {
-    font-size: 21px;
-    font-weight: 700;
-    letter-spacing: -0.025em;
-    color: #ffffff;
-    margin-bottom: 6px;
-    line-height: 1.3;
-}
-
-.faculty-dept {
-    font-size: 13.5px;
-    color: var(--text-secondary);
-    line-height: 1.45;
-    margin-bottom: 4px;
-}
-
-.faculty-inst {
+.faculty-popup-dept {
     font-size: 12px;
-    color: var(--text-muted);
-    margin-bottom: 22px;
+    color: var(--text-secondary);
+    line-height: 1.35;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 6px;
 }
 
-.faculty-actions {
+.faculty-popup-footer {
     display: flex;
-    justify-content: center;
-    margin-bottom: 14px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 11px;
 }
 
-.faculty-profile-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
+.faculty-popup-inst {
+    color: var(--text-muted);
+}
+
+.faculty-popup-link {
+    color: var(--apple-blue);
+    text-decoration: none;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: rgba(41, 151, 255, 0.12);
+    border: 1px solid rgba(41, 151, 255, 0.25);
+    transition: all 0.15s ease;
+}
+
+.faculty-popup-link:hover {
     background: var(--apple-blue);
     color: #ffffff;
-    font-size: 13.5px;
-    font-weight: 600;
-    text-decoration: none;
-    padding: 10px 22px;
-    border-radius: 980px;
-    box-shadow: 0 4px 14px rgba(41, 151, 255, 0.35);
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.faculty-profile-btn:hover {
-    background: var(--apple-blue-hover);
-    box-shadow: 0 6px 20px rgba(41, 151, 255, 0.5);
-    transform: translateY(-1px);
     text-decoration: none;
 }
-
-.faculty-footnote {
-    font-size: 11px;
-    color: var(--text-muted);
-    opacity: 0.7;
-}
-
 </style>
 </head>
 <body>
@@ -995,33 +962,30 @@ summary:hover {
 
 <div id="toast" class="toast"></div>
 
-<!-- Faculty Profile Modal -->
-<div id="facultyModal" class="faculty-modal" aria-hidden="true" role="dialog" aria-labelledby="facultyModalName">
-    <div class="faculty-modal-backdrop" id="modalBackdrop"></div>
-    <div class="faculty-modal-card">
-        <button class="faculty-modal-close" id="modalCloseBtn" aria-label="Close dialog" type="button">✕</button>
-        <div class="faculty-avatar-wrap">
-            <img id="facultyModalImg" src="" alt="Faculty photo" referrerpolicy="no-referrer" />
-            <div id="facultyAvatarFallback" class="faculty-avatar-fallback"></div>
+
+
+<!-- Gmail-style Faculty Popover -->
+<div id="facultyPopup" class="faculty-popup" aria-hidden="true" role="tooltip">
+    <div class="faculty-popup-content">
+        <div class="faculty-popup-avatar-wrap">
+            <img id="popupImg" src="" alt="Faculty photo" referrerpolicy="no-referrer" />
+            <div id="popupAvatarFallback" class="faculty-popup-fallback"></div>
         </div>
-        <div class="faculty-modal-body">
-            <span class="faculty-badge" id="facultyModalDesig">Faculty</span>
-            <h3 class="faculty-name" id="facultyModalName">Professor Name</h3>
-            <p class="faculty-dept" id="facultyModalDept">Department</p>
-            <p class="faculty-inst">Indian Institute of Technology (ISM) Dhanbad</p>
-            <div class="faculty-actions">
-                <a id="facultyModalLink" href="#" target="_blank" rel="noopener noreferrer" class="faculty-profile-btn">
-                    <span>View Official Profile</span>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                        <polyline points="15 3 21 3 21 9"></polyline>
-                        <line x1="10" y1="14" x2="21" y2="3"></line>
-                    </svg>
+        <div class="faculty-popup-info">
+            <div class="faculty-popup-header">
+                <span class="faculty-popup-name" id="popupName"></span>
+                <span class="faculty-popup-badge" id="popupDesig"></span>
+            </div>
+            <div class="faculty-popup-dept" id="popupDept"></div>
+            <div class="faculty-popup-footer">
+                <span class="faculty-popup-inst">IIT (ISM) Dhanbad</span>
+                <a id="popupLink" href="#" target="_blank" rel="noopener noreferrer" class="faculty-popup-link">
+                    Profile ↗
                 </a>
             </div>
-            <div class="faculty-footnote">Photo source: IIT (ISM) Dhanbad Directory (iitism.ac.in)</div>
         </div>
     </div>
+</div>
 
 <script>
 let ranking = JSON.parse(localStorage.getItem("ranking")) || [];
@@ -1230,16 +1194,16 @@ document.getElementById("courseSearch").addEventListener("input", (e) => {
     });
 });
 
-// Faculty Profile Modal Handling
-const facultyModal = document.getElementById("facultyModal");
-const modalImg = document.getElementById("facultyModalImg");
-const avatarFallback = document.getElementById("facultyAvatarFallback");
-const modalName = document.getElementById("facultyModalName");
-const modalDesig = document.getElementById("facultyModalDesig");
-const modalDept = document.getElementById("facultyModalDept");
-const modalLink = document.getElementById("facultyModalLink");
-const modalCloseBtn = document.getElementById("modalCloseBtn");
-const modalBackdrop = document.getElementById("modalBackdrop");
+// Gmail-style Faculty Popover Handling
+const facultyPopup = document.getElementById("facultyPopup");
+const popupImg = document.getElementById("popupImg");
+const popupAvatarFallback = document.getElementById("popupAvatarFallback");
+const popupName = document.getElementById("popupName");
+const popupDesig = document.getElementById("popupDesig");
+const popupDept = document.getElementById("popupDept");
+const popupLink = document.getElementById("popupLink");
+
+let activeAnchor = null;
 
 function getInitials(name) {
     const clean = (name || "").replace(/^(Prof\.|Dr\.|Prof|Dr)\s*/i, "").trim();
@@ -1248,70 +1212,105 @@ function getInitials(name) {
     return clean.slice(0, 2).toUpperCase() || "IIT";
 }
 
-function openFacultyModal(data) {
-    if (!facultyModal) return;
-    if (modalName) modalName.textContent = data.name || "Faculty Member";
-    if (modalDesig) modalDesig.textContent = data.desig || "Faculty";
-    if (modalDept) modalDept.textContent = data.dept || "Department of Engineering & Sciences";
-    if (modalLink) modalLink.href = data.url || "https://www.iitism.ac.in/all-faculty";
+function showFacultyPopup(anchorEl, data) {
+    if (!facultyPopup) return;
+
+    if (activeAnchor === anchorEl && facultyPopup.classList.contains("visible")) {
+        hideFacultyPopup();
+        return;
+    }
+
+    popupName.textContent = data.name || "Faculty Member";
+    popupDesig.textContent = data.desig || "Faculty";
+    popupDept.textContent = data.dept || "IIT (ISM) Dhanbad";
+    popupLink.href = data.url || "https://www.iitism.ac.in/all-faculty";
 
     const rawImg = data.img ? data.img.trim() : "";
     const hasValidImg = rawImg.length > 0 && !rawImg.endsWith("/.jpg");
-    
-    if (avatarFallback) avatarFallback.style.display = "none";
-    if (modalImg) modalImg.style.display = "block";
 
-    if (hasValidImg && modalImg) {
-        modalImg.src = encodeURI(rawImg);
-        modalImg.onerror = () => {
-            modalImg.style.display = "none";
-            if (avatarFallback) {
-                avatarFallback.textContent = getInitials(data.name || "");
-                avatarFallback.style.display = "flex";
-            }
+    popupAvatarFallback.style.display = "none";
+    popupImg.style.display = "block";
+
+    if (hasValidImg) {
+        popupImg.src = encodeURI(rawImg);
+        popupImg.onerror = () => {
+            popupImg.style.display = "none";
+            popupAvatarFallback.textContent = getInitials(data.name || "");
+            popupAvatarFallback.style.display = "flex";
         };
     } else {
-        if (modalImg) modalImg.style.display = "none";
-        if (avatarFallback) {
-            avatarFallback.textContent = getInitials(data.name || "");
-            avatarFallback.style.display = "flex";
-        }
+        popupImg.style.display = "none";
+        popupAvatarFallback.textContent = getInitials(data.name || "");
+        popupAvatarFallback.style.display = "flex";
     }
 
-    facultyModal.classList.add("active");
-    facultyModal.setAttribute("aria-hidden", "false");
-    document.body.style.overflow = "hidden";
+    // Calculate position right next to clicked badge
+    const rect = anchorEl.getBoundingClientRect();
+    const popupWidth = 320;
+    const margin = 8;
+
+    let left = rect.left + (rect.width / 2) - (popupWidth / 2);
+    if (left < 12) left = 12;
+    if (left + popupWidth > window.innerWidth - 12) {
+        left = window.innerWidth - popupWidth - 12;
+    }
+
+    const popupEstimatedHeight = 90;
+    let top = rect.bottom + margin;
+    let placeAbove = false;
+    if (top + popupEstimatedHeight > window.innerHeight && rect.top - popupEstimatedHeight - margin > 0) {
+        top = rect.top - popupEstimatedHeight - margin;
+        placeAbove = true;
+    }
+
+    facultyPopup.style.left = `${Math.round(left)}px`;
+    facultyPopup.style.top = `${Math.round(top)}px`;
+    facultyPopup.classList.toggle("place-above", placeAbove);
+
+    facultyPopup.classList.add("visible");
+    facultyPopup.setAttribute("aria-hidden", "false");
+    activeAnchor = anchorEl;
 }
 
-function closeFacultyModal() {
-    if (!facultyModal) return;
-    facultyModal.classList.remove("active");
-    facultyModal.setAttribute("aria-hidden", "true");
-    document.body.style.overflow = "";
+function hideFacultyPopup() {
+    if (!facultyPopup) return;
+    facultyPopup.classList.remove("visible");
+    facultyPopup.setAttribute("aria-hidden", "true");
+    activeAnchor = null;
 }
 
-// Click or keypress on professor link opens the modal without checking the course checkbox
+// Click on professor badge opens/toggles the popover without checking the course checkbox
 document.addEventListener("click", (e) => {
     const profLink = e.target.closest(".prof-link");
     if (profLink) {
         e.preventDefault();
         e.stopPropagation();
-        openFacultyModal({
+        showFacultyPopup(profLink, {
             name: profLink.dataset.name,
             img: profLink.dataset.img,
             dept: profLink.dataset.dept,
             desig: profLink.dataset.desig,
             url: profLink.dataset.url
         });
+        return;
+    }
+
+    // Click outside dismisses popup
+    if (facultyPopup && !facultyPopup.contains(e.target)) {
+        hideFacultyPopup();
     }
 });
 
-if (modalCloseBtn) modalCloseBtn.addEventListener("click", closeFacultyModal);
-if (modalBackdrop) modalBackdrop.addEventListener("click", closeFacultyModal);
+// Dismiss on scroll or escape key
+window.addEventListener("scroll", () => {
+    if (facultyPopup && facultyPopup.classList.contains("visible")) {
+        hideFacultyPopup();
+    }
+}, { passive: true });
 
 window.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && facultyModal && facultyModal.classList.contains("active")) {
-        closeFacultyModal();
+    if (e.key === "Escape" && facultyPopup && facultyPopup.classList.contains("visible")) {
+        hideFacultyPopup();
     }
 });
 
